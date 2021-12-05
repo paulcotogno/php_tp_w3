@@ -154,7 +154,10 @@ if (isset($_SESSION['id'])) {
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item"><?= $post['date'] ?></li>
-                    <?php if ($isadmin) { ?>
+                    <?php
+                    $userIsAdmin = $um->getUser($_SESSION['id']);
+                    if ($userIsAdmin['isAdmin'] == 1 || $_SESSION['id'] == $user['id']) {
+                    ?>
                         <li class="list-group-item d-flex">
                             <form action="" method="post">
                                 <input type="text" name="modifyPostScreen" class="d-none" value="<?= $post['id']; ?>">
@@ -185,12 +188,19 @@ if (isset($_SESSION['id'])) {
                                         <div class="w-100 d-flex justify-content-between">
                                             <h6 class="comment-author"><?php $userCom = $um->getUser($comment['userId']);
                                                                         echo $userCom['firstName'] . ' ' . $userCom['lastName']; ?></h6>
-                                            <div class="d-flex"><button class="btn btn-primary" onclick="document.getElementById('modifyComment<?= $comment['id'] ?>').style.display='block'">Ouvrir la modification</button>
-                                                <form action="" method="post">
-                                                    <input type="text" name="deleteCom" class="d-none" value="<?= $comment['id'] ?>">
-                                                    <input type="submit" class="btn btn-danger ms-2" value="Supprimer">
-                                                </form>
-                                            </div>
+                                            <?php
+                                            $userIsAdmin = $um->getUser($_SESSION['id']);
+                                            if ($userIsAdmin['isAdmin'] == 1 || $_SESSION['id'] == $userCom['id']) {
+                                            ?>
+                                                <div class="d-flex"><button class="btn btn-primary" onclick="document.getElementById('modifyComment<?= $comment['id'] ?>').style.display='block'">Ouvrir la modification</button>
+                                                    <form action="" method="post">
+                                                        <input type="text" name="deleteCom" class="d-none" value="<?= $comment['id'] ?>">
+                                                        <input type="submit" class="btn btn-danger ms-2" value="Supprimer">
+                                                    </form>
+                                                <?php
+                                            }
+                                                ?>
+                                                </div>
                                         </div>
                                         <hr />
                                         <p class="comment px-3 pt-1"><?= $comment['content'];

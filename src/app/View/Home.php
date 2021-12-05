@@ -18,42 +18,44 @@ $um = new UserManager(Database::getConnection());
 
 $posts = $pm->getAllPosts();
 
-if (isset($_SESSION['id'])) {
-    if (isset($_POST['content'], $_POST['postId'])) {
+if (isset($_POST['content'], $_POST['postId'])) {
 
-        $input = array(
-            'content' => $_POST['content'],
-            'postId' => $_POST['postId'],
-            'userId' => $_SESSION['id'],
-            'date' => date('Y-m-d')
-        );
+    $input = array(
+        'content' => $_POST['content'],
+        'postId' => $_POST['postId'],
+        'userId' => $_SESSION['id'],
+        'date' => date('Y-m-d')
+    );
 
-        $comment = $cm->createComment($input);
+    $comment = $cm->createComment($input);
 
-        header('Location: http://localhost:5555/app/View/Home.php');
-        exit();
-    } else {
+    header('Location: http://localhost:5555/app/View/Home.php');
+    exit();
+} else {
 ?>
-        <div class="post-container">
-            <div class="d-flex align-items-center flex-column px-3 bg-light pt-4">
-                <?php foreach ($posts as $post) {
-                    $user = $um->getUser($post['userId']);
-                ?>
-                    <div class="card w-50 my-3">
-                        <h6 class="card-header">
-                            <?= $user['firstName'] . " " . $user['lastName'] ?>
-                        </h6>
+    <div class="post-container">
+        <div class="d-flex align-items-center flex-column px-3 bg-light pt-4">
+            <?php foreach ($posts as $post) {
+                $user = $um->getUser($post['userId']);
+            ?>
+                <div class="card w-50 my-3">
+                    <h6 class="card-header">
+                        <?= $user['firstName'] . " " . $user['lastName'] ?>
+                    </h6>
 
-                        <a href="Post.php/<?= $post['id'] ?>">
-                            <img alt="" class="w-100" src="<?= $post['imageLink'] ?>" />
-                            <div class="card-body">
-                                <h5 class="card-title"><?= $post['title'] ?></h5>
-                                <p class="card-text"><?= $post['content'] ?></p>
-                            </div>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><?= $post['date'] ?></li>
-                            </ul>
-                        </a>
+                    <a href="Post.php/<?= $post['id'] ?>">
+                        <img alt="" class="w-100" src="<?= $post['imageLink'] ?>" />
+                        <div class="card-body">
+                            <h5 class="card-title"><?= $post['title'] ?></h5>
+                            <p class="card-text"><?= $post['content'] ?></p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><?= $post['date'] ?></li>
+                        </ul>
+                    </a>
+                    <?php
+                    if (isset($_SESSION['id'])) {
+                    ?>
                         <div class="card-footer">
                             <form action="" method="post" class="d-flex">
                                 <textarea name="content" id="input1" class="w-100" rows="1" cols="48"></textarea>
@@ -61,17 +63,13 @@ if (isset($_SESSION['id'])) {
                                 <input class="btn btn-secondary ms-3" type="submit" value="Commenter">
                             </form>
                         </div>
-                    </div>
-                <?php }
-                ?>
-            </div>
+                    <?php
+                    }
+                    ?>
+                </div>
+            <?php }
+            ?>
         </div>
-    <?php
-    }
-} else {
-    ?>
-    <div>
-        <p>vous devez être connecter pour accéder à cette page</p>
     </div>
 <?php
 }
